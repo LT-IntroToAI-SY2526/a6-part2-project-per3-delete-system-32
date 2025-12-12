@@ -19,9 +19,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
+import seaborn as sns
 
 # TODO: Update this with your actual filename
-DATA_FILE = 'your_data.csv'
+DATA_FILE = '1000_Companies.csv'
 
 def load_and_explore_data(filename):
     """
@@ -38,12 +39,18 @@ def load_and_explore_data(filename):
     print("LOADING AND EXPLORING DATA")
     print("=" * 70)
     
-    # Your code here
-    
-    pass
+    df = pd.read_csv('1000_companies.csv')
+    df.replace({'State':{'New York':0,'California':1,'Florida':2}},inplace=True)
+    df.head
+    df.shape
+    df.count
+    df.describe
+    df.info
+    return df
 
 
-def visualize_data(data):
+def visualize_data(df):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
     """
     Create visualizations to understand your data
     
@@ -60,11 +67,19 @@ def visualize_data(data):
     print("\n" + "=" * 70)
     print("VISUALIZING RELATIONSHIPS")
     print("=" * 70)
+    #df['Profit'].hist(,figsize=(10,5))
     
-    # Your code here
-    # Hint: Use subplots like in Part 2!
+
+    axes[0,0].hist(df['Profit'],bins=50)
+    axes[0,0].set_xlabel('Profit',)
+    axes[0,0].set_ylabel('number of companies')
     
-    pass
+    sns.boxplot(data=df,palette="winter",ax=axes[1,0])
+    axes[1,0].tick_params(axis = 'x',labelrotation = 45)
+    plt.show()
+    
+    
+
 
 
 def prepare_and_split_data(data):
