@@ -115,6 +115,7 @@ def visualize_data(df, button, predictions, y_test):
       axes[1, 1].grid(True, alpha=0.6)
 
     plt.tight_layout()
+    plt.savefig('Basic')
     plt.show()
 
 def drop_outliers(df, column):
@@ -292,7 +293,7 @@ def make_prediction(model):
     return predicted_price
 
 def plot_prediction_analysis(y_test, predictions,df):
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    fig, axes = plt.subplots(2, 2, figsize=(13, 11))
     # 1. Create a DataFrame for easy plotting
     results = pd.DataFrame({'Actual': y_test, 'Predicted': predictions})
     
@@ -336,6 +337,8 @@ def plot_prediction_analysis(y_test, predictions,df):
     # axes[1, 1].set_ylabel('Predicted Profit ($)')
     # axes[1, 1].set_title('Predicted Profit vs Real Profit')
     # axes[1, 1].grid(True, alpha=0.6)
+    plt.tight_layout()
+    plt.savefig('Fancy')
     plt.show()
 
 
@@ -353,8 +356,6 @@ if __name__ == "__main__":
     # Step 3: Prepare and split
     data = drop_outliers(data,"Profit")
     data = drop_outliers(data,"Administration")
-    df = drop_outliers(data,"Profit")
-    df = drop_outliers(data,"Administration")
     X_train, X_test, y_train, y_test = prepare_and_split_data(data)
 
     # Step 4: Train
