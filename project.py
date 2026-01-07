@@ -290,7 +290,9 @@ def make_prediction(model):
     print(f"Predicted price: ${predicted_price:,.2f}")
     # TODO: Return the predicted price
     return predicted_price
-def plot_prediction_analysis(y_test, predictions):
+
+def plot_prediction_analysis(y_test, predictions,df):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
     # 1. Create a DataFrame for easy plotting
     results = pd.DataFrame({'Actual': y_test, 'Predicted': predictions})
     
@@ -300,27 +302,27 @@ def plot_prediction_analysis(y_test, predictions):
                                  'Over-predicted', 'Under-predicted')
 
     # 3. Create the plot
-    plt.figure(figsize=(10, 6))
     sns.scatterplot(data=results, x='Actual', y='Predicted', hue='Status', 
                     palette={'Over-predicted': '#e74c3c', 'Under-predicted': '#3498db'},
-                    alpha=0.7, s=60)
+                    alpha=0.7, s=60, ax=axes[1,1])
 
     # 4. Add the "Perfect Prediction" line (y = x)
     max_val = max(results['Actual'].max(), results['Predicted'].max())
     min_val = min(results['Actual'].min(), results['Predicted'].min())
-    plt.plot([min_val, max_val], [min_val, max_val], color='gray', linestyle='--', label='Perfect Accuracy (y=x)')
+    axes[1,1].plot([min_val, max_val], [min_val, max_val], color='gray', linestyle='--', label='Perfect Accuracy (y=x)')
 
     # 5. Formatting
-    plt.title('Model Evaluation: Over-predicted vs. Under-predicted', fontsize=14)
-    plt.xlabel('Actual Profit ($)')
-    plt.ylabel('Predicted Profit ($)')
-    plt.legend(title='Prediction Status')
-    plt.grid(True, linestyle=':', alpha=0.6)
-    plt.show()
+    axes[1,1].set_title('Model Evaluation: Over-predicted vs. Under-predicted', fontsize=14)
+    axes[1,1].set_xlabel('Actual Profit ($)')
+    axes[1,1].set_ylabel('Predicted Profit ($)')
+    axes[1,1].legend(title='Prediction Status')
+    axes[1,1].grid(True, linestyle=':', alpha=0.6)
+    
     axes[0,0].hist(df['Profit'],bins=50)
     axes[0,0].set_xlabel('Profit',)
     axes[0,0].set_ylabel('number of companies')
     axes[0,0].set_title(' number of companies by Profit')
+    axes[1, 1].tick_params(axis = 'x',labelrotation = 25)
 
     sns.boxplot(data=df.drop(columns=['State']),palette="winter",ax=axes[0,1])
     axes[0,1].tick_params(axis = 'x',labelrotation = 90)
@@ -329,12 +331,13 @@ def plot_prediction_analysis(y_test, predictions):
     sns.heatmap(df.drop(columns=['State']).corr(),annot=True, ax= axes[1,0])
     axes[1,0].set_title('how all the data correlates')
 
-    axes[1, 1].scatter(y_test, predictions, color='blue', alpha=0.6)
-    axes[1, 1].set_xlabel('Profit ($)')
-    axes[1, 1].set_ylabel('Predicted Profit ($)')
-    axes[1, 1].set_title('Predicted Profit vs Real Profit')
-    axes[1, 1].grid(True, alpha=0.6)
-    axes[1, 1].tick_params(axis = 'x',labelrotation = 25)
+    # axes[1, 1].scatter(y_test, predictions, color='blue', alpha=0.6)
+    # axes[1, 1].set_xlabel('Profit ($)')
+    # axes[1, 1].set_ylabel('Predicted Profit ($)')
+    # axes[1, 1].set_title('Predicted Profit vs Real Profit')
+    # axes[1, 1].grid(True, alpha=0.6)
+    plt.show()
+
 
 
 
@@ -343,14 +346,15 @@ def plot_prediction_analysis(y_test, predictions):
 if __name__ == "__main__":
     # Step 1: Load and explore
     data = load_and_explore_data(DATA_FILE)
-
+    df = load_and_explore_data(DATA_FILE)
     # Step 2: Visualize
     visualize_data(data, False, None,y_test=None)
 
     # Step 3: Prepare and split
     data = drop_outliers(data,"Profit")
     data = drop_outliers(data,"Administration")
-
+    df = drop_outliers(data,"Profit")
+    df = drop_outliers(data,"Administration")
     X_train, X_test, y_train, y_test = prepare_and_split_data(data)
 
     # Step 4: Train
@@ -362,8 +366,8 @@ if __name__ == "__main__":
     # Step 6: Make a prediction, add features as an argument
     make_prediction(model)
 
-    visualize_data(data, True, predictions,y_test)
-    plot_prediction_analysis(y_test, predictions)
+    ## visualize_data(data, True, predictions,y_test)
+    plot_prediction_analysis(y_test, predictions,df)
     print("\n" + "=" * 70)
     print("PROJECT COMPLETE!")
     print("=" * 70)
